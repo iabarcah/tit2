@@ -1,0 +1,49 @@
+<%- include ('partials-admin/_header-admin')  %>
+
+    <!-- Sección del contenido (Cuerpo general) -->
+    <div class="content">
+
+        <div class="container-form">
+            <h3 class="text-center">Modificar un atractivo</h3>
+            <form action="/modificar-atractivo-reg/<%= data.id_atractivo %>" method="POST">
+                <div class="datos">
+                    <label>Título</label>
+                    <div class="input-user">
+                        <input class="text" type="text" name="titulo" value="<%= data.titulo %>" required>
+                    </div>
+                </div>
+                <div class="datos">
+                    <label>Descripción o historia</label>
+                    <div class="input-user">
+                        <textarea class="text" name="descripcion" required><%= data.descripcion %></textarea>
+                    </div>
+                </div>
+                <div class="datos">
+                    <label>Geolocalización</label>
+                    <div class="input-user">
+                        <input class="text" type="text" name="geo_local" value="<%= data.geo_local %>" required>
+                    </div>
+                </div>
+                <div class="datos">
+                    <label>Teléfono</label>
+                    <div class="input-user">
+                        <input class="text" type="text" name="telefono" value="<%= data.telefono %>" required>
+                    </div>
+                </div>
+                <!-- <div class="datos">
+                    <label>Agregue una imagen para el servivio.</label>
+                    <div class="file">
+                        <input class="file" type="file" placeholder="x" required>
+                    </div>
+                </div> -->  
+                <div class="boton">
+                    <button type="submit">Modificar atractivo</button>
+                </div>
+            </form>
+        </div>
+            
+    </div>
+
+    <!-- Fin sección del contenido (Cuerpo general)  -->
+
+<%- include ('partials-admin/_footer-admin')  %>

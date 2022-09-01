@@ -1,0 +1,224 @@
+<%- include ('partials-home/_header-home')  %> 
+
+        <div class="mapa">
+            <div class="titulo">
+                <h2 class="centrado">Apartado de servicios</h2>
+            </div>
+            <div id="map"></div>
+        </div>
+
+        <div class="iconos">
+            <div class="row-iconos">
+                <a href="">
+                    <img src="/img/icono-1.png" alt="Servicios Gastronómicos">
+                    <div class="overlay overlayFade">
+                        <div class="text-over">Gastronomia</div>
+                    </div>
+                </a>
+            </div>
+            <div class="row-iconos">
+                <a href="">
+                    <img src="/img/icono-2.png" alt="Alojamientos">
+                    <div class="overlay overlayFade">
+                        <div class="text-over">Alojamientos</div>
+                    </div>
+                </a>
+            </div>
+            <div class="row-iconos">
+                <a href="">
+                    <img src="/img/icono-3.png" alt="Agencias y TTOO">
+                    <div class="overlay overlayFade">
+                        <div class="text-over">Agencias y TTOO</div>
+                    </div>
+                </a>
+            </div>
+            <div class="row-iconos">
+                <a href="">
+                    <img src="/img/icono-4.png" alt="Paseos Náuticos">
+                    <div class="overlay overlayFade">
+                        <div class="text-over">Paseos Náuticos</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="filtro">
+            <h2 class="centrado texto-blanco">Servicios</h2>
+            <div class="dropdown">
+                <div class="select_style">
+                    <select id="mySelect">
+                        <option class="category_item" value="Todos">Tipo de servicio (Todos)</option>
+                        <% for(var i=0; i < dataCategoria.length; i++) { %>
+                            <option class="category_item" value="<%= dataCategoria[i].nombre_cat %>" ><%= dataCategoria[i].nombre_cat %></option>
+                        <% } %>
+                    </select>
+                </div>
+                <div class="select_style">
+                    <select id="mySelectDos">
+                        <option class="category_item_dos" value="Todos">Subtipo de servicio (Todos)</option>
+                        <% for(var i=0; i < dataSubcategoria.length; i++) { %>
+                            <option class="category_item_dos" all="all" category="<%= dataSubcategoria[i].nombre_cat %>" value="<%= dataSubcategoria[i].nombre_subcat %>" ><%= dataSubcategoria[i].nombre_subcat %></option>
+                        <% } %>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="tarjetas">
+            <% var cont=0;%>
+            <% if (data) { %>
+                <div class="row">
+                <% for(var i=0; i < data.length; i++) { %>
+                    <% cont=1;%>
+                    <% if (data[i].solicitud == 1) { %>
+                        <div class="tarjeta" all="all" category="<%= data[i].nombre_cat%>" subcategory="<%= data[i].nombre_subcat %>" > 
+                            <div class="baner">
+                                <p class="mayus negrita"><%= data[i].titulo %></p>
+                                <p><%= data[i].nombre_cat %></p>
+                            </div>
+                            <a href="/servicio/<%= data[i].id_servicio%>">
+                                <img src="/img/<%= data[i].img || 'default.png'%>">
+                            </a>
+                        </div>
+                    <% } %>
+                <% } %>
+                </div>
+            <% } %>
+            
+            <% if (cont==0) { %>
+                <h4 id="msj" class="centrado texto-ng text-h4">Lo sentimos, no hay publicaciones disponibles.</a></h4>
+            <% } %>
+        </div>
+
+        <script>
+            $(document).ready(function(){
+                
+                
+                
+                // SEGUNDO SELECT - CATEGORIAS
+                $('#mySelect').on('change', function() {
+                    var value = $(this).val();
+                    
+                    $('#mySelectDos').val("Todos");
+                    $('#mySelectDos option[all="all"]').hide();
+                    $('#mySelectDos option[category="' + value + '"]').show();
+                    
+    
+                    // OCULTAR PRODUCTO
+                    $('.tarjeta').css('transform', 'scale(0)');
+                    function hideProduct() {
+                        $('.tarjeta').hide();
+                    } setTimeout(hideProduct, 300);
+                    
+                    //Mostrar Producto
+                    function showProduct() {
+                        $('.tarjeta[category="' + value + '"]').show();
+                        $('.tarjeta[category="' + value + '"]').css('transform', 'scale(1)');
+                        
+                    } setTimeout(showProduct, 300);
+    
+                    // TODOS
+                    if ($(this).val() === 'Todos') {
+                        function showAll() {
+                            $('#mySelectDos option[all="all"]').show();
+                            $('.tarjeta[all="all"]').show();
+                            $('.tarjeta').css('transform', 'scale(1)');
+                        } setTimeout(showAll, 300);
+                    }
+
+                });
+
+                // SEGUNDO SELECT - SUBCATEGORIAS 
+                $('#mySelectDos').on('change', function() {
+
+                    var value = $(mySelect).val();
+                    var valueDos = $(this).val();
+
+                    $('.tarjeta').css('transform', 'scale(0)');
+                    function hideProduct() {
+                        $('.tarjeta').hide();
+                    } setTimeout(hideProduct, 300);
+                    
+                    //Mostrar Producto
+                    function showProduct() {
+                        $('.tarjeta[subcategory="' + valueDos + '"]').show();
+                        $('.tarjeta[subcategory="' + valueDos + '"]').css('transform', 'scale(1)');
+                        
+                    } setTimeout(showProduct, 300);
+                
+                    if (valueDos === 'Todos' && value === 'Todos') {
+                        function showAll() {
+                            $('.tarjeta[all="all"]').show();
+                            $('.tarjeta').css('transform', 'scale(1)');
+                        } setTimeout(showAll, 300);
+                    }else if (valueDos === 'Todos' && value != 'Todos') {
+                        function showProduct() {
+                            $('.tarjeta[category="' + value + '"]').show();
+                            $('.tarjeta[category="' + value + '"]').css('transform', 'scale(1)');
+                        } setTimeout(showProduct, 300);
+                    }else if(valueDos != 'Todos' && value != 'Todos'){
+                        function showProduct() {
+                        $('.tarjeta[category="' + value + '"][subcategory="' + valueDos + '"]').show();
+                        $('.tarjeta[category="' + value + '"][subcategory="' + valueDos + '"]').css('transform', 'scale(1)');
+                        } setTimeout(showProduct, 300);
+                    }
+                });
+            });   
+        </script>
+
+        <script>
+            var a = '<%- JSON.stringify(data)%>';
+            var data = JSON.parse(a);
+            var delay = 100;
+            var infowindow = new google.maps.InfoWindow();
+            var geo = new google.maps.Geocoder(); 
+    
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 11,
+                center: { lat: -33.59829709005887, lng: -71.60798902585982 },
+            });
+    
+            function getAddress(search, next, i) {
+                geo.geocode({address:search}, function (results,status){ 
+                    if (status == google.maps.GeocoderStatus.OK) {
+    
+                        var marker = new google.maps.Marker({
+                            position: results[0].geometry.location,
+                            map: map,
+                            title: data[i].titulo,
+                            animation: google.maps.Animation.DROP
+                        });
+                        google.maps.event.addListener(marker, 'click', function() {
+                            infowindow.setContent(data[i].titulo);
+                            infowindow.open(map,marker);
+                        });
+                    }
+                    else {
+                        if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
+                            sigLugar--;
+                            delay++;
+                        } else {
+                            alert("Geocode was not successful for the following reason: " + status);
+                        }   
+                    }
+                    next();
+                });
+            }
+    
+            var lugares = []
+            for (let i = 0; i < data.length; i++) { lugares.push(data[i].geo_local); }
+            var sigLugar = 0;
+            function inicio() {
+                if (sigLugar < lugares.length) {
+                    setTimeout('getAddress("'+lugares[sigLugar]+'",inicio, sigLugar-1)', delay);
+                    sigLugar++;
+                } else {
+                    map.center(-33.59829709005887, -71.60798902585982);
+                }
+            }
+            inicio();
+        </script>
+        
+
+        <script src="js/confirm.js"></script>
+<%- include ('partials-home/_footer-home')  %>   

@@ -1,0 +1,97 @@
+<%- include ('partials-home/_header-home')  %> 
+
+        <div class="slide">
+            <div class="slide-body">
+                <input type="radio" id="i1" name="images" checked />
+                
+                <div class="slide_img" id="one"> <img src="/img/<%= data[0].img || 'default.png'%>"> </div>
+    
+                <div id="nav-slide">
+                    <label for="i1" class="dots" id="dot1"></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="title">
+            <h2 class="centrado texto-ng"><%= data[0].titulo%></h2>
+        </div>
+
+        <div class="descripcion">
+            <h3 class="texto-ng mediano"> <%= data[0].descripcion%></h3>
+        </div>
+
+        <div class="info">
+            <div id="map" style="height: 300px;"></div>
+            <div class="info-box">
+                <h3 class="texto-ng"><i class="fas fa-map-marker-alt texto-ng"></i> <%= data[0].geo_local%></h3>
+                <h3 class="texto-ng"><i class="fas fa-phone texto-ng"></i> <%= data[0].telefono%></h3>
+            </div>
+        </div>
+        
+
+        <script>
+            var a = '<%- JSON.stringify(data)%>';
+            var data = JSON.parse(a);
+            var delay = 100;
+            var infowindow = new google.maps.InfoWindow();
+            var geo = new google.maps.Geocoder();
+
+            var pinColor = "FE67FE";
+            var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+                new google.maps.Size(24, 34),
+                new google.maps.Point(0,0),
+                new google.maps.Point(10, 34));
+            var pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+                new google.maps.Size(40, 37),
+                new google.maps.Point(0, 0),
+                new google.maps.Point(12, 35));
+    
+            function getAddress(search, next, i) {
+                geo.geocode({address:search}, function (results,status){ 
+                    const map = new google.maps.Map(document.getElementById("map"), {
+                        zoom: 15,
+                        center: results[0].geometry.location,
+                    });
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        var marker = new google.maps.Marker({
+                            position: results[0].geometry.location,
+                            map: map,
+                            title: data[i].titulo,
+                            animation: google.maps.Animation.DROP,
+                            // icon: pinImage,
+                            // shadow: pinShadow
+                        });
+                        google.maps.event.addListener(marker, 'click', function() {
+                            infowindow.setContent(data[i].titulo);
+                            infowindow.open(map,marker);
+                        });
+                    }
+                    else {
+                        if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
+                            sigLugar--;
+                            delay++;
+                        } else {
+                            alert("Geocode was not successful for the following reason: " + status);
+                        }   
+                    }
+                    next();
+                });
+            }
+    
+            var lugares = []
+            for (let i = 0; i < data.length; i++) { lugares.push(data[i].geo_local); }
+            var sigLugar = 0;
+            function inicio() {
+                if (sigLugar < lugares.length) {
+                    setTimeout('getAddress("'+lugares[sigLugar]+'",inicio, sigLugar-1)', delay);
+                    sigLugar++;
+                } else {
+                    map.center(-33.59829709005887, -71.60798902585982);
+                }
+            }
+            inicio();
+        </script>
+        
+
+        <script src="js/confirm.js"></script>
+<%- include ('partials-home/_footer-home')  %>

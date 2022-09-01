@@ -1,0 +1,122 @@
+<%- include ('partials-admin/_header-admin')  %>
+
+    <!-- Sección del contenido (Cuerpo general) -->
+    <div class="content">
+
+        <div class="container-form">
+            <h3 class="text-center">Modificar un servicio</h3>
+            <form action="/modificar-servicio-reg/<%= data.id_servicio %>" method="POST">
+                <div class="datos">
+                    <label>Título</label>
+                    <div class="input-user">
+                        <input class="text" type="text" name="titulo" value="<%= data.titulo %>" required>
+                    </div>
+                </div>
+                <div class="datos">
+                    <label>Descripción</label>
+                    <div class="input-user">
+                        <textarea class="text" name="descripcion" required><%= data.descripcion %></textarea>
+                    </div>
+                </div>
+                <div class="datos">
+                    <label>Ubicación</label>
+                    <div class="input-user">
+                        <input class="text" type="text" name="geo_local" value="<%= data.geo_local %>" required>
+                    </div>
+                </div>
+                <div class="datos">
+                    <label>Teléfono</label>
+                    <div class="input-user">
+                        <input class="text" type="text" name="telefono" value="<%= data.telefono %>" required>
+                    </div>
+                </div>
+                <div class="datos">
+                    <label>Correo electrónico </label>
+                    <div class="input-user">
+                        <input class="text" type="email" name="contacto_correo" value="<%= data.contacto_correo %>" required>
+                    </div>
+                </div>
+                <div class="datos">
+                    <label>Facebook (opcional) </label>
+                    <div class="input-user">
+                        <input class="text" name="facebook" value="<%= data.facebook %>"></input>
+                    </div>
+                </div>
+                <div class="datos">
+                    <label>Twitter (opcional) </label>
+                    <div class="input-user">
+                        <input class="text" name="twitter" value="<%= data.twitter %>"></input>
+                    </div>
+                </div>
+                <div class="datos">
+                    <label>Instagram (opcional) </label>
+                    <div class="input-user">
+                        <input class="text" name="instagram" value="<%= data.instagram %>"></input>
+                    </div>
+                </div>
+                <div class="datos">
+                    <label>Sitio web (opcional)</label>
+                    <div class="input-user">
+                        <input class="text" name="web" value="<%= data.web%>"></input>
+                    </div>
+                </div>
+                <div class="datos">
+                    <label for="cars">Seleccione la categoría de su servicio:</label>
+                    <select id="mySelect" name="nombre_cat">
+                        <option value="<%= data.nombre_cat%>" selected="true" ><%= data.nombre_cat%> (Actual)</option>
+                        <% for(var i=0; i < datacat.length; i++) { %>
+                            <% if (datacat[i].nombre_cat != data.nombre_cat){  %>
+                                <option value="<%= datacat[i].nombre_cat %>"><%= datacat[i].nombre_cat %></option>
+                            <% } %>
+                        <% } %>
+                    </select required>
+                </div>
+                <div class="datos">
+                    <label for="cars">Seleccione la subcategoría de su servicio:</label>
+                    <select id="mySelectDos" name="nombre_subcat">
+                        <% if(data.nombre_subcat === null || data.nombre_subcat === "" ){ %>
+                            <option  category="<%= data.nombre_cat %>" actual="actual" value="null" selected="true" ><%= "Ninguna" %> (Actual)</option>
+                        <% }else{ %>
+                            <option  category="<%= data.nombre_cat %>" value="null" ><%= "Ninguna" %></option>
+                            <option actual="actual" all="all" category="<%= data.nombre_cat %>" value="<%= data.nombre_subcat%>" selected="true" ><%= data.nombre_subcat%> (Actual)</option>
+                        <% } %>
+                        
+                        <% for(var i=0; i < datasubcat.length; i++) { %>
+                            <% if (datasubcat[i].nombre_subcat != data.nombre_subcat){  %>
+                                <option all="all" category="<%= datasubcat[i].nombre_cat %>" value="<%= datasubcat[i].nombre_subcat %>" ><%= datasubcat[i].nombre_subcat %></option>
+                            <% } %>
+                        <% } %>
+                    </select>
+                </div>
+                <div class="boton">
+                    <button type="submit">Modificar servicio</button>
+                </div>
+            </form>
+        </div>
+            
+    </div>
+    
+    <!-- Fin sección del contenido (Cuerpo general)  -->
+    <script>
+        $(document).ready(function () {
+            
+            
+            $('#mySelectDos option[all="all"]').hide();
+            var valueDos = $('#mySelectDos option[actual="actual"]').attr("category");
+            $('#mySelectDos option[category="' + valueDos + '"]').show();
+            // combobox y servicios
+            $('#mySelect').on('change', function () {
+
+                var value = $(this).val();
+                //var Todos =   $("#mySelect option[value='Todos']").attr("selected", true);
+
+                $('#mySelectDos option[all="all"]').hide();
+                $('#mySelectDos').val("null");
+                $('#mySelectDos option[category="' + value + '"]').show();
+            
+            });
+
+        });
+    </script>
+    
+<%- include ('partials-admin/_footer-admin')  %>
