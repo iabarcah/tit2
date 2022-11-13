@@ -277,12 +277,60 @@
                                           v-model="newEvento.hora_fin_evento"
                                           required="required" >
                                       </div>
-
+                                      <div class="form-group">
+                                        <label for="direccion_evento">Direccion</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="direccion_evento"
+                                          placeholder="ej: Canchas Pasto. Freire 345"
+                                          v-model="newEvento.direccion_evento"
+                                          required="required" >
+                                      </div>
+                                      <div class="form-group">
+                                        <label for="descripcion_evento">Descripcion</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id = "descripcion_evento"
+                                          placeholder="Ingrese la descripcion del evento"
+                                          v-model="newEvento.descripcion_evento"
+                                          required = "required"                                                                             
+                                        >
+                                      </div>
+                                      <div class="form-group">
+                                        <label for ="requisitos_evento">Requisito</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="requisitos_evento"
+                                          placeholder="Requisitos para postular al evento"
+                                          v-model="newEvento.requisitos_evento"
+                                          required="required"
+                                        >
+                                      </div>
+                                      <div class="form-group">
+                                        <label for="estado_evento">Estado</label>
+                                        <input
+                                        type="text"
+                                        class="form-control"
+                                        id="estado_evento"
+                                        placeholder="Ponga el estado en que se encuentra el evento"
+                                        v-model = "newEvento.estado_evento"
+                                        required =required
+                                        >                                  
+                                      </div>
+                                      <button type="button" class="btn btn-secondary m-progress" data-dismiss="modal">Close</button>
+                                      <button type="submit" class="btn btn-primary">Save changes</button>
                                     </div>
                                   </form>
                                 </div>
                               </div>
+                              <div class="loading" v-if="loading===true">Loading&#8230;</div>
                             </div>
+                          <!--Fin Agregar un Evento-->
+
+                          <!--Inicio Editar un elemento-->
 
 
                         </div>
@@ -351,7 +399,48 @@
                     this.loading = true;
                     console.log(err);
                   })
+                },
+                getEvento: function(id){
+                  this.loading = true;
+                  this.$http.get(`/api/evento/${id}/`)
+                    .then((response) => {
+                      this.currentEvento = response.data;
+                      $("#editEventoModal").modal('show');
+                      this.loading = false;
+                    })
+                    .catch((err) => {
+                      this.laoding = false;
+                      console.log(err);
+                    })
+                },
+                
+                deleteEvento: function(id){
+                  this.loading = true;
+                  this.$http.delete(`/api/evento/${id}/`)
+                    .then((response) => {
+                      this.laoding = false;
+                      this.getArticles();
+                    })
+                    .catch((err) =>{
+                      this.loading = false;
+                      console.log(err);
+                    })
+                },
+
+                updateArticle: function(){
+                  this.loading = true;
+                  this.$http.put(`/api/evento/${this.currentEvento.evento_id}/`, this.currentEvento)
+                    .then((response) => {
+                      this.loading = false;
+                      this.currentEvento = response.data;
+                      this.getEventos();
+                    })
+                    .catch((err) => {
+                      this.loading = false;
+                      console.log(err);
+                    })
                 }
+
             }
         });
 
