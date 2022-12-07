@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+ <meta charset="utf-8">
+ <title>Django Vue JS CRUD App</title>
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="description" content="A simple crud app made with the vue js and django"><meta name="keywords" content="vuejs, django, crudapp, restapi">
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+      /* Absolute Center Spinner */
+  .loading {
+    position: fixed;
+    z-index: 999;
+    height: 2em;
+    width: 2em;
+    overflow: show;
+    margin: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+  
+  /* Transparent Overlay */
+  .loading:before {
+    content: '';
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.3);
+  }
+  
+  /* :not(:required) hides these rules from IE9 and below */
+  .loading:not(:required) {
+    /* hide "loading..." text */
+    font: 0/0 a;
+    color: transparent;
+    text-shadow: none;
+    background-color: transparent;
+    border: 0;
+  }
+  
+  .loading:not(:required):after {
+    content: '';
+    display: block;
+    font-size: 10px;
+    width: 1em;
+    height: 1em;
+    margin-top: -0.5em;
+    -webkit-animation: spinner 1500ms infinite linear;
+    -moz-animation: spinner 1500ms infinite linear;
+    -ms-animation: spinner 1500ms infinite linear;
+    -o-animation: spinner 1500ms infinite linear;
+    animation: spinner 1500ms infinite linear;
+    border-radius: 0.5em;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+    box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) -1.5em 0 0 0, rgba(0, 0, 0, 0.75) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+  }
+  
+  /* Animation */
+  
+  @-webkit-keyframes spinner {
+    0% {
+      -webkit-transform: rotate(0deg);
+      -moz-transform: rotate(0deg);
+      -ms-transform: rotate(0deg);
+      -o-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+      -moz-transform: rotate(360deg);
+      -ms-transform: rotate(360deg);
+      -o-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  @-moz-keyframes spinner {
+    0% {
+      -webkit-transform: rotate(0deg);
+      -moz-transform: rotate(0deg);
+      -ms-transform: rotate(0deg);
+      -o-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+      -moz-transform: rotate(360deg);
+      -ms-transform: rotate(360deg);
+      -o-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  @-o-keyframes spinner {
+    0% {
+      -webkit-transform: rotate(0deg);
+      -moz-transform: rotate(0deg);
+      -ms-transform: rotate(0deg);
+      -o-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+      -moz-transform: rotate(360deg);
+      -ms-transform: rotate(360deg);
+      -o-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes spinner {
+    0% {
+      -webkit-transform: rotate(0deg);
+      -moz-transform: rotate(0deg);
+      -ms-transform: rotate(0deg);
+      -o-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+      -moz-transform: rotate(360deg);
+      -ms-transform: rotate(360deg);
+      -o-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+      </style>
+
+
+ </head>
+<body>
+    <div class="container-fluid">
+        <h2 class="text-center alert alert-danger">Panel de Administración</h2>
+        <div class="row">
+            <div class="col-sm-2"></div>
+
+
+            <div class="col-sm-8">
+                <div id="starting">
+                    <div class="container">
+                        <div class="row">
+                            <h1>
+                                <button style="text-align: right;" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addEventosModal">Agregar evento</button>
+                            </h1>
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Tipo</th>
+                                        <th scope="col">Cupo</th>
+                                        <th scope="col">Fecha Inicio</th>
+                                        <th scope="col">Fecha de termino</th>                                      
+                                        <th scope="col">Direcion</th>
+                                        <th scope="col">Descripcion</th>
+                                        <th scope="col">Requisito</th>
+                                        <th scope="col">Estado</th>
+                                        <th scope="col">URL</th>
+                                        <th scope="col">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="evento in eventos">
+                                        <th scope="row">${evento.id_evento}</th>
+                                        <th scope="row">${evento.nombre_evento}</th>
+                                        <th scope="row">${evento.tipo_evento}</th>
+                                        <th scope="row">${evento.cupo_evento}</th>
+                                        <th scope="row">${evento.fecha_inicio_evento}</th>
+                                        <th scope="row">${evento.fecha_fin_evento}</th>                    
+                                        <th scope="row">${evento.direccion_evento}</th>
+                                        <th scope="row">${evento.descripcion_evento}</th>
+                                        <th scope="row">${evento.requisitos_evento}</th>
+                                        <th scope="row">${evento.estado_evento}</th>
+                                        <th scope="row">${evento.url_evento}</th>
+
+                                        <td>
+                                            <button class="btn btn-info" v-on:click="getEvento(evento.id_evento)">Editar</button>
+                                            <button class="btn btn-danger" v-on:click="deleteEvento(evento.id_evento)">Eliminar</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+                            <!-- Agregar Eventos en Modal -->
+                            <div class="modal fade" id="addEventosModal" tabindex="-1" role="dialog" aria-labelledby="exampleModelLongTitle" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModelLongTitle">Agregar Evento</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <form v-on:submit.prevent="addEventos()">
+                                    <div class="modal-body">
+                                      <!-- Datos del Modelo -->
+                                      <div class="form-group">
+                                        <label for="nombre_evento">Nombre</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="nombre_evento"
+                                          placeholder="Ingresar nombre del evento"
+                                          v-model="newEvento.nombre_evento"
+                                          required="required" >
+                                      </div>
+                                        
+                                      <div class="form-group">
+                                        <label for="tipo_evento">Tipo Evento</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="tipo_evento"
+                                          placeholder="Ingresar tipo del evento"
+                                          v-model="newEvento.tipo_evento"
+                                          required="required" >
+                                      </div>
+
+                                      <div class="form-group">
+                                        <label for="cupo_evento">Cupo Evento</label>
+                                        <input
+                                          type="number"
+                                          class="form-control"
+                                          id="cupo_evento"
+                                          placeholder="Ingresar tipo del evento"
+                                          v-model="newEvento.cupo_evento"
+                                          required="required" 
+                                          min="1"
+                                          max="999">
+                                      </div>
+
+                                      <div class="form-group">
+                                        <label for="fecha_inicio_evento">Fecha Inicio Evento</label>
+                                        <input
+                                          type="date"
+                                          class="form-control"
+                                          id="fecha_inicio_evento"
+                                          placeholder="Ingresar fecha de inicio"
+                                          v-model="newEvento.fecha_inicio_evento"
+                                          required="required" >
+                                      </div>
+
+                                      <div class="form-group">
+                                        <label for="fecha_fin_evento">Fecha Fin Evento</label>
+                                        <input
+                                          type="date"
+                                          class="form-control"
+                                          id="fecha_fin_evento"
+                                          placeholder="Ingresar fecha de inicio"
+                                          v-model="newEvento.fecha_fin_evento"
+                                          required="required" >
+                                      </div>
+
+                                      
+                                      <div class="form-group">
+                                        <label for="direccion_evento">Direccion</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="direccion_evento"
+                                          placeholder="ej: Canchas Pasto. Freire 345"
+                                          v-model="newEvento.direccion_evento"
+                                          required="required" >
+                                      </div>
+                                      <div class="form-group">
+                                        <label for="descripcion_evento">Descripcion</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id = "descripcion_evento"
+                                          placeholder="Ingrese la descripcion del evento"
+                                          v-model="newEvento.descripcion_evento"
+                                          required = "required"                                                                             
+                                        >
+                                      </div>
+                                      <div class="form-group">
+                                        <label for ="requisitos_evento">Requisito</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="requisitos_evento"
+                                          placeholder="Requisitos para postular al evento"
+                                          v-model="newEvento.requisitos_evento"
+                                          required="required"
+                                        >
+                                      </div>
+                                      <div class="form-group">
+                                        <label for="estado_evento">Estado</label>
+                                        <input
+                                        type="text"
+                                        class="form-control"
+                                        id="estado_evento"
+                                        placeholder="Ponga el estado en que se encuentra el evento"
+                                        v-model = "newEvento.estado_evento"
+                                        required =required
+                                        >                                  
+                                      </div>
+                                      <div class="form-group">
+                                        <label for="estado_evento">URL</label>
+                                        <input
+                                        type="text"
+                                        class="form-control"
+                                        id="url_evento"
+                                        placeholder="Ponga la url del evento"
+                                        v-model = "currentEvento.url_evento"
+                                        required =required
+                                        >                                  
+                                      </div>
+                                      <button type="button" class="btn btn-secondary m-progress" data-dismiss="modal">Close</button>
+                                      <button type="submit" class="btn btn-primary">Agregar Evento</button>
+                                    </div>
+                                  </form>
+                                </div>
+                              </div>
+                              <div class="loading" v-if="loading===true">Loading&#8230;</div>
+                            </div>
+                          <!--Fin Agregar un Evento-->
+
+                          <!--Inicio Editar un elemento-->
+                          <div class="modal fade" id="editEventoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLongTitle">Editar Evento</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <form v-on:submit.prevent="updateEvento()">
+                                <div class="modal-body">
+                                  <div class="form-group">
+                                    <label for="nombre_evento">Nombre</label>
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      id="nombre_evento"
+                                      placeholder="Ingresar nombre del evento"
+                                      v-model="currentEvento.nombre_evento"
+                                      required="required" >
+                                  </div>
+                                    
+                                  <div class="form-group">
+                                    <label for="tipo_evento">Tipo Evento</label>
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      id="tipo_evento"
+                                      placeholder="Ingresar tipo del evento"
+                                      v-model="currentEvento.tipo_evento"
+                                      required="required" >
+                                  </div>
+
+                                  <div class="form-group">
+                                    <label for="cupo_evento">Cupo Evento</label>
+                                    <input
+                                      type="number"
+                                      class="form-control"
+                                      id="cupo_evento"
+                                      placeholder="Ingresar tipo del evento"
+                                      v-model="currentEvento.cupo_evento"
+                                      required="required" 
+                                      min="1"
+                                      max="999">
+                                  </div>
+
+                                  <div class="form-group">
+                                    <label for="fecha_inicio_evento">Fecha Inicio Evento</label>
+                                    <input
+                                      type="date"
+                                      class="form-control"
+                                      id="fecha_inicio_evento"
+                                      placeholder="Ingresar fecha de inicio"
+                                      v-model="currentEvento.fecha_inicio_evento"
+                                      required="required" >
+                                  </div>
+
+                                  <div class="form-group">
+                                    <label for="fecha_fin_evento">Fecha Fin Evento</label>
+                                    <input
+                                      type="date"
+                                      class="form-control"
+                                      id="fecha_fin_evento"
+                                      placeholder="Ingresar fecha de inicio"
+                                      v-model="currentEvento.fecha_fin_evento"
+                                      required="required" >
+                                  </div>
+
+                                  
+                                  <div class="form-group">
+                                    <label for="direccion_evento">Direccion</label>
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      id="direccion_evento"
+                                      placeholder="ej: Canchas Pasto. Freire 345"
+                                      v-model="currentEvento.direccion_evento"
+                                      required="required" >
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="descripcion_evento">Descripcion</label>
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      id = "descripcion_evento"
+                                      placeholder="Ingrese la descripcion del evento"
+                                      v-model="currentEvento.descripcion_evento"
+                                      required = "required"                                                                             
+                                    >
+                                  </div>
+                                  <div class="form-group">
+                                    <label for ="requisitos_evento">Requisito</label>
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      id="requisitos_evento"
+                                      placeholder="Requisitos para postular al evento"
+                                      v-model="currentEvento.requisitos_evento"
+                                      required="required"
+                                    >
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="estado_evento">Estado</label>
+                                    <input
+                                    type="text"
+                                    class="form-control"
+                                    id="estado_evento"
+                                    placeholder="Ponga el estado en que se encuentra el evento"
+                                    v-model = "currentEvento.estado_evento"
+                                    required =required
+                                    >                                  
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="estado_evento">URL</label>
+                                    <input
+                                    type="text"
+                                    class="form-control"
+                                    id="url_evento"
+                                    placeholder="Ponga la url del evento"
+                                    v-model = "currentEvento.url_evento"
+                                    required =required
+                                    >                                  
+                                  </div>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary m-progress" data-dismiss="modal">Close</button>
+                                  <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                </div>
+                                </form>
+                              </div>
+                            </div>
+                            <div class="loading" v-if="loading===true">Loading&#8230;</div>
+                          </div> 
+                          <!--Fin editar un elemento-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-2"></div>
+ 
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <!-- vue.js files -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.5"></script>
+
+    <script type="text/javascript">
+    Vue.http.headers.common['X-CSRFToken'] = "{{ csrf_token }}";
+        new Vue({
+            el: '#starting',
+            delimiters: ['${','}'],
+            data :{
+                eventos: [],
+                loading: true,
+                currentEvento: {},
+                message : null,
+                newEvento: { 'nombre_evento':null, 'tipo_evento':null , 'cupo_evento':null, 'fecha_inicio_evento':null, 'fecha_fin_evento':null,'direccion_evento':null,'descripcion_evento':null,'requisitos_evento':null,'estado_evento':null,'url_evento':null },
+                search_term: '',
+            },
+
+            mounted: function(){
+                this.getEventos();
+            },
+
+            methods: {
+                getEventos: function(){
+                    let api_url = '/a[pi/evento';
+                    if(this.search_term!=='||this.search_term!==null'){
+                        api_url = `/api/evento/?search=${this.search_term}`
+                    }
+                    this.loading = true;
+                    this.$http.get(api_url)
+                        .then((response) => {
+                            this.eventos = response.data;
+                            this.loading = false;
+                        })
+                        .catch((err) => {
+                            this.loading = false;
+                            console.log(err);
+                        })
+                },
+
+                addEventos: function(){
+                  this.loading = true;
+                  this.$http.post('/api/evento/', this.newEvento)
+                  .then((response) => {
+                    this.loading = true;
+                    this.getEventos();
+                  })
+                  .catch((err) =>{
+                    this.loading = true;
+                    console.log(err);
+                  })
+                },
+                getEvento: function(id){
+                  this.loading = true;
+                  this.$http.get(`/api/evento/${id}/`)
+                    .then((response) => {
+                      this.currentEvento = response.data;
+                      $("#editEventoModal").modal('show');
+                      this.loading = false;
+                    })
+                    .catch((err) => {
+                      this.loading = false;
+                      console.log(err);
+                    })
+                },
+                
+                deleteEvento: function(id){
+                  this.loading = true;
+                  this.$http.delete(`/api/evento/${id}/`)
+                    .then((response) => {
+                      this.loading = false;
+                      this.getArticles();
+                    })
+                    .catch((err) =>{
+                      this.loading = false;
+                      console.log(err);
+                    })
+                },
+
+                updateEvento: function(){
+                  this.loading = true;
+                  this.$http.put(`/api/evento/${this.currentEvento.id_evento}/`, this.currentEvento)
+                    .then((response) => {
+                      this.loading = false;
+                      this.currentEvento = response.data;
+                      this.getEventos();
+                    })
+                    .catch((err) => {
+                      this.loading = false;
+                      console.log(err);
+                    })
+                }
+
+            }
+        });
+
+    </script>
+
+</body>
+</html>

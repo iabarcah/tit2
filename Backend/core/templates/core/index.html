@@ -177,6 +177,7 @@
                                         <th scope="row">${evento.descripcion_evento}</th>
                                         <th scope="row">${evento.requisitos_evento}</th>
                                         <th scope="row">${evento.estado_evento}</th>
+                                        <th scope="row">${evento.URL_form}</th>
                                         <td>
                                             <button class="btn btn-info" v-on:click="getEvento(evento.id_evento)">Editar</button>
                                             <button class="btn btn-danger" v-on:click="deleteEvento(evento.id_evento)">Eliminar</button>
@@ -320,6 +321,17 @@
                                         required =required
                                         >                                  
                                       </div>
+                                      <div class="form-group">
+                                        <label for="URL_form">URL</label>
+                                        <input
+                                        type="text"
+                                        class="form-control"
+                                        id="URL_form"
+                                        placeholder="LINK EVENTIO"
+                                        v-model = "newEvento.URL_form"
+                                        required =required
+                                        >                                  
+                                      </div>
                                       <button type="button" class="btn btn-secondary m-progress" data-dismiss="modal">Close</button>
                                       <button type="submit" class="btn btn-primary">Agregar Evento</button>
                                     </div>
@@ -356,7 +368,7 @@
                                   <div class="form-group">
                                     <label for="tipo_evento">Tipo Evento</label>
                                     <input
-                                      type="text"
+                                      type="checkbox"
                                       class="form-control"
                                       id="tipo_evento"
                                       placeholder="Ingresar tipo del evento"
@@ -420,6 +432,7 @@
                                       v-model="currentEvento.hora_fin_evento"
                                       required="required" >
                                   </div>
+                                  
                                   <div class="form-group">
                                     <label for="direccion_evento">Direccion</label>
                                     <input
@@ -463,6 +476,17 @@
                                     required =required
                                     >                                  
                                   </div>
+                                  <div class="form-group">
+                                    <label for="URL_form">Enlace Inscripcion</label>
+                                    <input
+                                    type="text"
+                                    class="form-control"
+                                    id="URL_form"
+                                    placeholder="Ingrese url del formulario de inscripcion"
+                                    v-model = "currentEvento.URL_form"
+                                    required="required"
+                                    >
+                                  </div>
                                 </div>
                                 <div class="modal-footer">
                                   <button type="button" class="btn btn-secondary m-progress" data-dismiss="modal">Close</button>
@@ -503,7 +527,7 @@
                 loading: true,
                 currentEvento: {},
                 message : null,
-                newEvento: { 'nombre_evento':null, 'tipo_evento':null , 'cupo_evento':null, 'fecha_inicio_evento':null, 'fecha_fin_evento':null, 'hora_inicio_evento':null, 'hora_fin_evento':null, 'direccion_evento':null,'descripcion_evento':null,'requisitos_evento':null,'estado_evento':null },
+                newEvento: { 'nombre_evento':null, 'tipo_evento':null , 'cupo_evento':null, 'fecha_inicio_evento':null, 'fecha_fin_evento':null, 'hora_inicio_evento':null, 'hora_fin_evento':null, 'tipo_evento':null, 'direccion_evento':null,'descripcion_evento':null,'requisitos_evento':null,'estado_evento':null, 'URL_form':null },
                 search_term: '',
             },
 
