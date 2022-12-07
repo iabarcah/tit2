@@ -1,0 +1,17 @@
+.home {
+  height: fit-content;
+  width: 100vw;
+
+  .card_container {
+    background-color: #0005;
+    display: flex;
+    padding: 1rem;
+    gap: 1rem;
+  }
+}
+
+.carrousel_wrapper {
+  height: fit-content;
+  padding: 1rem;
+  width: 100%;
+}
